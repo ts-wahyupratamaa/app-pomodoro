@@ -1,0 +1,187 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fff5f0 0%, #ffe8dc 50%, #ffd4c4 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fallingFruit {
+  position: absolute;
+  top: -60px;
+  font-size: 3rem;
+  animation: fall 1.5s ease-in forwards;
+  z-index: 100;
+}
+
+@keyframes fall {
+  0% {
+    top: -60px;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100vh - 100px);
+    opacity: 0.8;
+    transform: rotate(360deg);
+  }
+}
+
+.timerCard {
+  text-align: center;
+  padding: 40px 60px;
+  z-index: 10;
+}
+
+.timerDisplay {
+  font-size: 7rem;
+  font-weight: 700;
+  color: #3d3d3d;
+  letter-spacing: -4px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modeSelector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.modeBtn {
+  background: transparent;
+  border: none;
+  padding: 8px 20px;
+  font-size: 1rem;
+  color: #666;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.modeBtn:hover {
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b35;
+}
+
+.modeBtn.active {
+  background: rgba(255, 107, 53, 0.15);
+  color: #ff6b35;
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.startBtn {
+  background: #4a4a4a;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.startBtn:hover {
+  background: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.resetBtn {
+  background: transparent;
+  color: #888;
+  border: 1px solid #ccc;
+  padding: 8px 25px;
+  font-size: 0.9rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetBtn:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.sessionInfo {
+  color: #ff8c5a;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.sessionsCount {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.fruitCollection {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  max-width: 90%;
+  padding: 10px;
+}
+
+.collectedFruit {
+  font-size: 2rem;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .timerDisplay {
+    font-size: 5rem;
+  }
+  
+  .timerCard {
+    padding: 30px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .timerDisplay {
+    font-size: 4rem;
+    letter-spacing: -2px;
+  }
+  
+  .timerCard {
+    padding: 20px 30px;
+  }
+  
+  .startBtn {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}
