@@ -13,7 +13,7 @@ type PomodoroHeaderProps = {
 export default function PomodoroHeader({
   userName,
   fruitCount,
-  minFruits = 2,
+  minFruits = 25,
   onGoPhotobooth,
   onGoHome,
 }: PomodoroHeaderProps) {
