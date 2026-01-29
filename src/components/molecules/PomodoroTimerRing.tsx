@@ -24,7 +24,7 @@ export default function PomodoroTimerRing({
           cx='150'
           cy='150'
           r={circleRadius}
-          stroke='#182d32ff'
+          stroke='#171364ff'
           strokeWidth='14'
           fill='transparent'
         />

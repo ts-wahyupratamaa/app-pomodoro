@@ -12,7 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://pomostudio.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/desain.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'PomoStudio - Pomodoro Timer & Photobooth',
@@ -78,7 +79,7 @@ export const metadata: Metadata = {
     title: 'PomoStudio - Pomodoro Timer & Photobooth',
     description:
       '🍅 Ambis belajar, self reward dengan foto! Pomodoro timer + Photobooth dalam satu aplikasi.',
-    images: ['/desain.png'],
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
