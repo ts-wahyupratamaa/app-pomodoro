@@ -429,7 +429,7 @@ const Pomodorotimer = () => {
         onGoPhotobooth={() =>
           triggerTransition('Masuk ke Photobooth...', ROUTES.photobooth)
         }
-        onGoHome={() => triggerTransition('Kembali ke Nama...', ROUTES.home)}
+        onGoHome={() => triggerTransition('Kembali...', ROUTES.home)}
       />
 
       <div className='relative z-20 flex flex-col items-center'>
