@@ -12,11 +12,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const nameCookie = request.cookies.get('pomodoro_name')?.value;
-  if (!nameCookie) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
+  if (guarded) {
+    const nameCookie = request.cookies.get('pomodoro_name')?.value;
+    if (!nameCookie) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();
