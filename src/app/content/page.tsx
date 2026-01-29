@@ -345,9 +345,20 @@ const Pomodorotimer = () => {
     };
   }, [isRunning, timeLeft, handleTimerComplete]);
 
-  const toggleTimer = () => setIsRunning((prev) => !prev);
+  const stopAlarm = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  const toggleTimer = () => {
+    stopAlarm();
+    setIsRunning((prev) => !prev);
+  };
 
   const resetTimer = () => {
+    stopAlarm();
     setIsRunning(false);
     setTimeLeft(mode === 'focus' ? FOCUS_TIME : BREAK_TIME);
     setSessionsCompleted(0);
@@ -362,6 +373,7 @@ const Pomodorotimer = () => {
   };
 
   const switchMode = (newMode: TimerMode) => {
+    stopAlarm();
     setIsRunning(false);
     setMode(newMode);
     setTimeLeft(newMode === 'focus' ? FOCUS_TIME : BREAK_TIME);
@@ -386,7 +398,7 @@ const Pomodorotimer = () => {
         </div>
       </div>
 
-      <audio ref={audioRef} preload='auto'>
+      <audio ref={audioRef} preload='auto' loop>
         <source src='/alarm.mp3' type='audio/mpeg' />
       </audio>
 
