@@ -12,10 +12,11 @@ export default function PomodoroControls({
   onReset,
 }: PomodoroControlsProps) {
   return (
-    <div className='flex items-center gap-4 mb-6 sm:mb-8'>
+    <div className='relative z-50 flex items-center gap-4 mb-6 sm:mb-8'>
       <button
         onClick={onToggle}
-        className='w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95'
+        className='w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer touch-manipulation'
+        style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         {isRunning ? (
           <div className='flex gap-1'>
@@ -29,7 +30,8 @@ export default function PomodoroControls({
 
       <button
         onClick={onReset}
-        className='w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95'
+        className='w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer touch-manipulation'
+        style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         <div className='w-4 h-4 sm:w-5 sm:h-5 bg-red-500 rounded-sm' />
       </button>

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { IoArrowUndoOutline } from 'react-icons/io5';
 
 type PomodoroHeaderProps = {
   userName: string;
@@ -13,7 +14,7 @@ type PomodoroHeaderProps = {
 export default function PomodoroHeader({
   userName,
   fruitCount,
-  minFruits = 25,
+  minFruits = 1,
   onGoPhotobooth,
   onGoHome,
 }: PomodoroHeaderProps) {
@@ -23,7 +24,7 @@ export default function PomodoroHeader({
     <>
       <div className='absolute top-4 sm:top-6 right-4 sm:right-8 z-30 flex flex-col items-end gap-3'>
         {userName && (
-          <div className='text-white/90 text-sm sm:text-lg font-medium text-right'>
+          <div className='text-white/90 text-base sm:text-lg font-medium text-right'>
             halo ka,{' '}
             <span className='font-bold text-amber-300'>{userName}</span>! 👋
           </div>
@@ -86,7 +87,8 @@ export default function PomodoroHeader({
         onClick={onGoHome}
         className='absolute top-4 sm:top-6 left-4 sm:left-8 z-30 flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 transition-all text-white text-xs sm:text-sm font-medium backdrop-blur-sm'
       >
-        ← Kembali
+        <IoArrowUndoOutline className='w-4 h-4' />
+        Kembali
       </button>
     </>
   );

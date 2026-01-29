@@ -1,5 +1,7 @@
 'use client';
 
+import { IoArrowUndoOutline } from 'react-icons/io5';
+
 type PhotoboothHeaderProps = {
   currentFruit: string;
   onBack: () => void;
@@ -17,15 +19,21 @@ export default function PhotoboothHeader({
           alt='fruit'
           className='w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 drop-shadow-lg'
         />
-        <h1 className='text-2xl md:text-4xl font-extrabold tracking-wide text-white drop-shadow-lg'>
-          Photobooth
-        </h1>
+        <div className='flex flex-col'>
+          <h1 className='text-2xl md:text-4xl font-extrabold tracking-wide text-white drop-shadow-lg'>
+            Photobooth
+          </h1>
+          <p className='text-white/60 text-xs sm:text-sm font-medium'>
+            Selamat! Kamu layak foto dulu 🎉
+          </p>
+        </div>
       </div>
       <button
         onClick={onBack}
-        className='px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs sm:text-sm font-medium'
+        className='flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs sm:text-sm font-medium'
       >
-        ← Kembali
+        <IoArrowUndoOutline className='w-4 h-4' />
+        Kembali
       </button>
     </div>
   );

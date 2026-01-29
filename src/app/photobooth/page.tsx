@@ -569,6 +569,207 @@ export default function PhotoboothPage() {
         />
       )}
 
+      {/* Decorative fruit icons - spread across screen */}
+      {/* Top area - 4 icons */}
+      <div className='hidden lg:block absolute left-[25%] top-2 z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.1s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-[40%] top-4 z-0 opacity-30'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.4s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-[25%] top-2 z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.2s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-[40%] top-4 z-0 opacity-30'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.5s' }}
+        />
+      </div>
+
+      {/* Left side - 7 icons */}
+      <div className='hidden lg:block absolute left-2 top-[12%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-32 h-32 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-16 top-[28%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.2s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-4 top-[45%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-36 h-36 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.4s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-20 top-[58%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.6s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-6 top-[72%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-32 h-32 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.8s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-14 top-[85%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '1s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-24 top-[38%] z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.3s' }}
+        />
+      </div>
+
+      {/* Right side - 7 icons */}
+      <div className='hidden lg:block absolute right-2 top-[15%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-32 h-32 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.1s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-16 top-[30%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.3s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-4 top-[48%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-36 h-36 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.5s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-20 top-[62%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.7s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-6 top-[75%] z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-32 h-32 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.9s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-14 top-[88%] z-0 opacity-45'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '1.1s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-24 top-[40%] z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.4s' }}
+        />
+      </div>
+
+      {/* Bottom area - 6 icons */}
+      <div className='hidden lg:block absolute left-[20%] bottom-4 z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.2s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-[35%] bottom-8 z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.5s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-[20%] bottom-4 z-0 opacity-40'>
+        <img
+          src={FRUIT_STICKERS[currentFruitIndex]}
+          alt='fruit'
+          className='w-28 h-28 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.3s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute right-[35%] bottom-8 z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 1) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-24 h-24 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.6s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-[50%] bottom-2 z-0 opacity-30'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 2) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.8s' }}
+        />
+      </div>
+      <div className='hidden lg:block absolute left-[10%] bottom-16 z-0 opacity-35'>
+        <img
+          src={FRUIT_STICKERS[(currentFruitIndex + 3) % FRUIT_STICKERS.length]}
+          alt='fruit'
+          className='w-20 h-20 animate-bounce drop-shadow-lg'
+          style={{ animationDelay: '0.7s' }}
+        />
+      </div>
+
       <TransitionOverlay
         active={isTransitioning}
         bgColor={bgColor}

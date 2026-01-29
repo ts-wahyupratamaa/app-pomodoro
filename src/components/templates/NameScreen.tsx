@@ -42,8 +42,14 @@ export default function NameScreen() {
     const savedName = localStorage.getItem('userName');
     if (savedName) {
       setNameCookie(savedName);
+      // Auto-redirect jika session sudah ada
+      setTransitionText('Selamat datang kembali! 👋');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        router.push(ROUTES.content);
+      }, 2000);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -167,16 +173,19 @@ export default function NameScreen() {
 
           <div>
             <h1 className='text-4xl sm:text-5xl md:text-7xl font-extrabold text-white leading-tight'>
-              Pomodoro
+              Pomo
             </h1>
             <h1 className='text-4xl sm:text-5xl md:text-7xl font-extrabold text-amber-300 leading-tight'>
-              Timer
+              Studio App
             </h1>
           </div>
 
           <p className='text-white/70 text-base md:text-lg max-w-md'>
-            Tingkatkan produktivitasmu dengan teknik pomodoro. Fokus 25 menit,
-            istirahat 5 menit.
+            Pomodoro Timer dan Photobooth dalam satu tempat.
+            <br />
+            <span className='text-amber-300 font-semibold'>
+              Ambis belajar, self reward dengan foto!
+            </span>
           </p>
         </div>
 
@@ -198,6 +207,7 @@ export default function NameScreen() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder='Masukkan nama kamu...'
+                maxLength={15}
                 autoFocus
                 className='w-full px-4 md:px-5 py-3 md:py-4 rounded-xl bg-white/90 text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-amber-400 transition-all text-center text-base md:text-lg'
                 suppressHydrationWarning

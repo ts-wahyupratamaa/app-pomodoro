@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Pomodoro',
-  description: 'Fokus dan istirahat dengan timer pomodoro yang fun.',
+  title: 'Mode Ambis',
+  description: 'Fokus dan istirahat dengan PomoStudio timer yang fun.',
 };
 
 export default function ContentLayout({

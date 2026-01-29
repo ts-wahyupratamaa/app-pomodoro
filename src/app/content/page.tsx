@@ -66,6 +66,33 @@ const Pomodorotimer = () => {
     if (savedColor) {
       setBgColor(savedColor);
     }
+
+    // Restore timer state from localStorage
+    const savedTimerState = localStorage.getItem('timerState');
+    if (savedTimerState) {
+      try {
+        const state = JSON.parse(savedTimerState);
+        const savedAt = state.savedAt || 0;
+        const wasRunning = state.isRunning || false;
+
+        // Calculate elapsed time if timer was running
+        if (wasRunning && savedAt) {
+          const elapsedSeconds = Math.floor((Date.now() - savedAt) / 1000);
+          const newTimeLeft = Math.max(0, state.timeLeft - elapsedSeconds);
+          setTimeLeft(newTimeLeft);
+        } else {
+          setTimeLeft(state.timeLeft || FOCUS_TIME);
+        }
+
+        setMode(state.mode || 'focus');
+        setIsRunning(wasRunning);
+        setSessionsCompleted(state.sessionsCompleted || 0);
+        setCurrentSession(state.currentSession || 1);
+      } catch {
+        // Invalid state, use defaults
+      }
+    }
+
     setTimeout(() => {
       setIsLoaded(true);
     }, 100);
@@ -93,9 +120,20 @@ const Pomodorotimer = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const clearTimerState = () => {
+    localStorage.removeItem('timerState');
+  };
+
+  const clearSession = () => {
+    localStorage.removeItem('userName');
+    document.cookie = 'pomodoro_name=; path=/; max-age=0';
+    clearTimerState(); // Also clear timer when going home
+  };
+
   const triggerTransition = (text: string, href: string) => {
     if (href === ROUTES.home) {
       localStorage.setItem('transitionOnLoadText', 'Sampai Jumpa! 👋');
+      clearSession(); // Clear session saat kembali ke home
     } else if (href === ROUTES.photobooth) {
       localStorage.setItem(
         'transitionOnLoadText',
@@ -136,36 +174,47 @@ const Pomodorotimer = () => {
       isStatic: true,
       render: { fillStyle: 'transparent' },
     };
+    // Floor positioned so fruits rest with small gap from bottom
     const floor = Bodies.rectangle(
       width / 2,
-      height - FRUIT_SIZE / 2,
-      width,
-      20,
+      height - 10, // Fruits rest with small gap from bottom edge
+      width * 3,
+      FRUIT_SIZE,
       boundaryOptions,
     );
+    // Left wall - thick enough to catch all fruits
     const leftWall = Bodies.rectangle(
-      -25,
+      -FRUIT_SIZE,
       height / 2,
-      50,
-      height,
+      FRUIT_SIZE * 2,
+      height * 2,
       boundaryOptions,
     );
+    // Right wall - positioned at right edge of visible screen
     const rightWall = Bodies.rectangle(
-      width + 25,
+      width + FRUIT_SIZE / 2, // At right edge, accounting for fruit center
       height / 2,
-      50,
-      height,
+      FRUIT_SIZE * 2,
+      height * 3,
       boundaryOptions,
     );
+    // No ceiling - fruits can be thrown up and will fall back down with gravity
 
-    const mouse = Mouse.create(containerRef.current);
-    const mouseConstraint = MouseConstraint.create(engine, {
-      mouse,
-      constraint: { stiffness: 0.2, render: { visible: false } },
-    });
-    render.mouse = mouse;
+    // Check if small mobile (phone only) - iPad and tablets should be desktop-like
+    const isPhone = /iPhone|Android.*Mobile/i.test(navigator.userAgent);
 
-    World.add(engine.world, [floor, leftWall, rightWall, mouseConstraint]);
+    // Desktop and tablets can drag fruits, only phones disable mouse constraint
+    if (!isPhone && containerRef.current) {
+      const mouse = Mouse.create(containerRef.current);
+      const mouseConstraint = MouseConstraint.create(engine, {
+        mouse,
+        constraint: { stiffness: 0.2, render: { visible: false } },
+      });
+      render.mouse = mouse;
+      World.add(engine.world, [floor, leftWall, rightWall, mouseConstraint]);
+    } else {
+      World.add(engine.world, [floor, leftWall, rightWall]);
+    }
 
     const runner = Runner.create();
     runnerRef.current = runner;
@@ -271,6 +320,19 @@ const Pomodorotimer = () => {
     setIsRunning(false);
   }, [mode, playAlarm, currentSession, BREAK_TIME, FOCUS_TIME]);
 
+  // Save timer state to localStorage whenever it changes
+  useEffect(() => {
+    const timerState = {
+      timeLeft,
+      mode,
+      isRunning,
+      sessionsCompleted,
+      currentSession,
+      savedAt: Date.now(),
+    };
+    localStorage.setItem('timerState', JSON.stringify(timerState));
+  }, [timeLeft, mode, isRunning, sessionsCompleted, currentSession]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isRunning && timeLeft > 0) {
@@ -283,11 +345,25 @@ const Pomodorotimer = () => {
     };
   }, [isRunning, timeLeft, handleTimerComplete]);
 
-  const toggleTimer = () => setIsRunning((prev) => !prev);
+  const stopAlarm = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  const toggleTimer = () => {
+    stopAlarm(); // Stop alarm when user interacts
+    setIsRunning((prev) => !prev);
+  };
 
   const resetTimer = () => {
+    stopAlarm(); // Stop alarm on reset
     setIsRunning(false);
     setTimeLeft(mode === 'focus' ? FOCUS_TIME : BREAK_TIME);
+    setSessionsCompleted(0);
+    setCurrentSession(1);
+    clearTimerState(); // Clear saved state on manual reset
     if (engineRef.current) {
       fruitBodies.forEach((fruit) =>
         Matter.World.remove(engineRef.current!.world, fruit.body),
@@ -297,6 +373,7 @@ const Pomodorotimer = () => {
   };
 
   const switchMode = (newMode: TimerMode) => {
+    stopAlarm(); // Stop alarm when switching mode
     setIsRunning(false);
     setMode(newMode);
     setTimeLeft(newMode === 'focus' ? FOCUS_TIME : BREAK_TIME);
@@ -321,7 +398,7 @@ const Pomodorotimer = () => {
         </div>
       </div>
 
-      <audio ref={audioRef} preload='auto'>
+      <audio ref={audioRef} preload='auto' loop>
         <source src='/alarm.mp3' type='audio/mpeg' />
       </audio>
 
