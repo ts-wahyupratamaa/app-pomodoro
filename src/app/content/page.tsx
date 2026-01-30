@@ -10,6 +10,10 @@ import PomodoroModeSwitch from '@/components/molecules/PomodoroModeSwitch';
 import SessionDots from '@/components/atoms/SessionDots';
 import RewardsBadge from '@/components/atoms/RewardsBadge';
 import { ROUTES } from '@/lib/routes';
+import {
+  requestNotificationPermission,
+  onForegroundMessage,
+} from '@/lib/firebase';
 
 type TimerMode = 'focus' | 'break';
 
@@ -35,11 +39,240 @@ const Pomodorotimer = () => {
   const [currentSession, setCurrentSession] = useState(1);
   const [fruitBodies, setFruitBodies] = useState<FruitBody[]>([]);
   const [userName, setUserName] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [bgColor, setBgColor] = useState('#6366f1');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionText, setTransitionText] = useState('');
   const [currentFruitIndex, setCurrentFruitIndex] = useState(0);
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
+
+  // Initialize Firebase Cloud Messaging
+  useEffect(() => {
+    const initFCM = async () => {
+      try {
+        const token = await requestNotificationPermission();
+        if (token) {
+          setFcmToken(token);
+          console.log('FCM initialized with token');
+        }
+      } catch (error) {
+        console.error('Failed to initialize FCM:', error);
+      }
+    };
+
+    initFCM();
+
+    // Listen for foreground messages
+    onForegroundMessage((payload) => {
+      console.log('Received foreground message:', payload);
+    });
+  }, []);
+
+  // Picture-in-Picture refs
+  const pipWindowRef = useRef<Window | null>(null);
+  const pipIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Open Picture-in-Picture window when user switches tab
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'hidden' && isRunning) {
+        // User switched away - open PiP
+        if ('documentPictureInPicture' in window) {
+          try {
+            const docPip = (
+              window as unknown as {
+                documentPictureInPicture: {
+                  requestWindow: (options: {
+                    width: number;
+                    height: number;
+                  }) => Promise<Window>;
+                };
+              }
+            ).documentPictureInPicture;
+            const pipWindow = await docPip.requestWindow({
+              width: 320,
+              height: 180,
+            });
+            pipWindowRef.current = pipWindow;
+
+            // Copy styles - MINIMAL CLEAN DESIGN
+            const style = pipWindow.document.createElement('style');
+            style.textContent = `
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body {
+                font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: #1a1a2e;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                padding: 16px;
+                position: relative;
+                overflow: hidden;
+              }
+              .mode { 
+                font-size: 10px; 
+                font-weight: 500;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.6);
+                margin-bottom: 6px;
+                position: relative;
+                z-index: 2;
+              }
+              .time { 
+                font-size: 56px; 
+                font-weight: 200;
+                letter-spacing: -2px;
+                font-variant-numeric: tabular-nums;
+                position: relative;
+                z-index: 2;
+              }
+              .status { 
+                font-size: 9px; 
+                font-weight: 500;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.4); 
+                margin-top: 10px;
+                position: relative;
+                z-index: 2;
+              }
+              .fruit {
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                opacity: 0.3;
+                z-index: 1;
+              }
+              .fruit-1 { bottom: 8px; left: 8px; }
+              .fruit-2 { top: 8px; right: 8px; }
+            `;
+            pipWindow.document.head.appendChild(style);
+
+            // Get current origin for image paths
+            const origin = window.location.origin;
+
+            // Create content
+            const container = pipWindow.document.createElement('div');
+            container.id = 'pip-content';
+            container.innerHTML = `
+              <img class="fruit fruit-1" src="${origin}/apel.png" alt="">
+              <img class="fruit fruit-2" src="${origin}/ceri.png" alt="">
+              <div class="mode">${mode === 'focus' ? 'Focus' : 'Break'}</div>
+              <div class="time" id="pip-time">--:--</div>
+              <div class="status">Pomostudio</div>
+            `;
+            pipWindow.document.body.appendChild(container);
+
+            // Update timer in PiP window
+            const updatePipTime = () => {
+              const timeEl = pipWindow.document.getElementById('pip-time');
+              if (timeEl) {
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+              }
+            };
+            updatePipTime();
+
+            // Close PiP when user returns
+            pipWindow.addEventListener('pagehide', () => {
+              if (pipIntervalRef.current) {
+                clearInterval(pipIntervalRef.current);
+              }
+              pipWindowRef.current = null;
+            });
+          } catch (error) {
+            console.log('PiP not available:', error);
+          }
+        }
+      } else if (document.visibilityState === 'visible') {
+        // User returned - close PiP
+        if (pipWindowRef.current) {
+          pipWindowRef.current.close();
+          pipWindowRef.current = null;
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (pipWindowRef.current) {
+        pipWindowRef.current.close();
+      }
+    };
+  }, [mode, isRunning]);
+
+  // Update PiP window time when timeLeft changes
+  useEffect(() => {
+    if (pipWindowRef.current) {
+      const timeEl = pipWindowRef.current.document.getElementById('pip-time');
+      if (timeEl) {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+    }
+  }, [timeLeft]);
+
+  // Update document title with timer countdown
+  useEffect(() => {
+    const emoji = mode === 'focus' ? '🍅' : '☕';
+    const modeText = mode === 'focus' ? 'Fokus' : 'Istirahat';
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    if (isRunning) {
+      document.title = `${emoji} ${timeStr} - ${modeText} | PomoStudio`;
+    } else {
+      document.title = 'PomoStudio - Timer Pomodoro';
+    }
+
+    return () => {
+      document.title = 'PomoStudio - Timer Pomodoro';
+    };
+  }, [timeLeft, mode, isRunning]);
+
+  // Send notification via Service Worker (works even when tab is closed)
+  const sendNotification = useCallback((title: string, body: string) => {
+    // Use Service Worker for notifications (persistent)
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(title, {
+          body,
+          icon: '/favicon.ico',
+          badge: '/favicon.ico',
+          tag: 'pomodoro-timer',
+          requireInteraction: true,
+          data: { url: '/pomodorotimer' },
+        });
+      });
+    } else if (
+      'Notification' in window &&
+      Notification.permission === 'granted'
+    ) {
+      // Fallback to regular notification
+      const notification = new Notification(title, {
+        body,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'pomodoro-timer',
+        requireInteraction: true,
+      });
+
+      setTimeout(() => notification.close(), 10000);
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    }
+  }, []);
 
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -61,7 +294,11 @@ const Pomodorotimer = () => {
     const savedName = localStorage.getItem('userName');
     const savedColor = localStorage.getItem('userBgColor');
     if (savedName) {
-      setUserName(savedName);
+      // Parse admin name: "admin ganteng" becomes "admin"
+      const isAdminUser = savedName.toLowerCase() === 'admin tampan';
+      setIsAdmin(isAdminUser);
+      const displayName = isAdminUser ? 'admin' : savedName;
+      setUserName(displayName);
     }
     if (savedColor) {
       setBgColor(savedColor);
@@ -306,11 +543,21 @@ const Pomodorotimer = () => {
 
   const handleTimerComplete = useCallback(() => {
     playAlarm();
+
+    // Send notification based on completed mode
     if (mode === 'focus') {
+      sendNotification(
+        '🍅 Waktu Fokus Selesai!',
+        'Kerja bagus! Saatnya istirahat sebentar. Kamu layak break! ☕',
+      );
       setSessionsCompleted((prev) => prev + 1);
       setMode('break');
       setTimeLeft(BREAK_TIME);
     } else {
+      sendNotification(
+        '☕ Waktu Istirahat Selesai!',
+        'Break time over! Ayo lanjut fokus lagi! 💪',
+      );
       setMode('focus');
       setTimeLeft(FOCUS_TIME);
       if (currentSession < TOTAL_SESSIONS)
@@ -318,7 +565,14 @@ const Pomodorotimer = () => {
       else setCurrentSession(1);
     }
     setIsRunning(false);
-  }, [mode, playAlarm, currentSession, BREAK_TIME, FOCUS_TIME]);
+  }, [
+    mode,
+    playAlarm,
+    sendNotification,
+    currentSession,
+    BREAK_TIME,
+    FOCUS_TIME,
+  ]);
 
   // Save timer state to localStorage whenever it changes
   useEffect(() => {
@@ -426,6 +680,7 @@ const Pomodorotimer = () => {
       <PomodoroHeader
         userName={userName}
         fruitCount={fruitBodies.length}
+        minFruits={isAdmin ? 4 : 25}
         onGoPhotobooth={() =>
           triggerTransition('Masuk ke Photobooth...', ROUTES.photobooth)
         }

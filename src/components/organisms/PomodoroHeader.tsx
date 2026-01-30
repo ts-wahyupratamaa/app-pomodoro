@@ -32,12 +32,18 @@ export default function PomodoroHeader({
 
         {!canOpen ? (
           <button className='flex items-center gap-2 py-2 rounded-xl backdrop-blur-sm text-white text-xs sm:text-sm font-medium'>
-            Tunggu {minFruits} fruits untuk buka Photobooth!
+            {minFruits <= 5 ? (
+              <>🔓 VIP Mode! Cuma butuh {minFruits} fruits aja~ ✨</>
+            ) : (
+              <>Tunggu {minFruits} fruits untuk buka Photobooth!</>
+            )}
           </button>
         ) : (
           <div className='flex flex-col items-center gap-2'>
             <button className='flex items-center gap-2 px-4 py-2 rounded-xl hover:scale-105 transition-all text-white text-xs sm:text-sm font-medium backdrop-blur-sm'>
-              Photobooth Terbuka!
+              {minFruits <= 5
+                ? '🎉 VIP Access Unlocked!'
+                : 'Photobooth Terbuka!'}
             </button>
             <div className='animate-wiggle hover:animate-shake cursor-pointer'>
               <Image
