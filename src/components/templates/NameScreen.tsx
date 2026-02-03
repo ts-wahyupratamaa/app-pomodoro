@@ -246,7 +246,7 @@ export default function NameScreen() {
       />
 
       <a
-        href='https://www.instagram.com/alvprma.2cn/'
+        href='https://wahyupratama.vercel.app/'
         target='_blank'
         rel='noreferrer'
         className='absolute bottom-4 left-4 text-xs text-white/60 hover:text-white/90 transition-colors'
